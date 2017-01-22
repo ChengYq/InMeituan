@@ -32,7 +32,7 @@ class EvaluationTool():
         self.ite = 0  # 记录一张图上的点击次数
         self.firstWrite=True  # 记录是不是第一行写入的
 
-    # using this method to generate dataSet
+    # 这个函数的功能是:产生待使用的数据集
     def generateData(self, path):
         f = open(path)
         global wholeData
@@ -40,7 +40,10 @@ class EvaluationTool():
         count = len(lineContext)
 
         for i in range(count):
+            if 'NULL' in lineContext[i]:
+                continue
             oneLine = lineContext[i].split()
+
             if i == 0:
                 continue
             elif i == 1:
@@ -124,6 +127,33 @@ class EvaluationTool():
         toWrite = str(wholeData[self.ind][7])+"\t"+str(int(self.position[0]))+"\t"+str(int(self.position[1]))+"\n"
         s.writelines(toWrite)
 
+#####################
+    # draw vertical lines
+    def drawVerticalLine(self, ind):
+        self.a11 = self.ax1.axvline(x=wholeData[ind][3])
+        self.a12 = self.ax1.axvline(x=wholeData[ind][4])
+
+
+
+
+        self.a21 = self.ax2.axvline(x=wholeData[ind][3])
+        self.a22 = self.ax2.axvline(x=wholeData[ind][4])
+
+
+        self.a11.set_color('r')
+        self.a21.set_color('r')
+        self.a11.set_linewidth(2)
+        self.a21.set_linewidth(2)
+
+
+        self.a12.set_color('m')
+        self.a22.set_color('m')
+        self.a12.set_linewidth(2)
+        self.a22.set_linewidth(2)
+
+
+
+########################
 
     def newNext(self,event):
         self.ind += 1
@@ -131,6 +161,15 @@ class EvaluationTool():
         ydata1 = wholeData[self.ind][1]
         ydata2 = wholeData[self.ind][0]
         print wholeData[self.ind][7]
+
+        self.a11.remove()
+        self.a12.remove()
+        self.a21.remove()
+        self.a22.remove()
+
+
+        self.drawVerticalLine(self.ind)
+
 
 
         self.l1.set_ydata(ydata1)
@@ -143,7 +182,6 @@ class EvaluationTool():
         self.ax2.autoscale_view()
         plt.draw()
 
-        print "sdf"
 
         self.clickArriveUp.remove()
         self.clickArriveDown.remove()
@@ -153,7 +191,7 @@ class EvaluationTool():
         plt.draw()
 
 # TODO:输出的目标文件,根据需要修改路径。该文件必须不存在(程序会自动创建),否则会修改已有的文件!!!
-        self.saveFile('/Users/chyq/Desktop/res.txt')
+        self.saveFile('/Users/chyq/Desktop/骑手轨迹/评估/res20170119.txt')
 
 
     # this method defines what to do when you click on the plot
@@ -202,7 +240,8 @@ class EvaluationTool():
 if __name__ == '__main__':
     e = EvaluationTool()
     # TODO:源数据路径,根据需要修改
-    e.generateData("/Users/chyq/Desktop/dataSet2.txt")
+    e.generateData("/Users/chyq/Desktop/骑手轨迹/评估/dataSet20170119.txt")
     e.drawPlot()
     e.plotConfig()
+    e.drawVerticalLine(0)
     plt.show()
